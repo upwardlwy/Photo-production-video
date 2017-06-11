@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .background-img {
+            width: 600px;
+            height: 400px;
+            margin: auto;
+           // border: 3px solid rgba(0, 0, 0, 0.65);
+        }
+
+        p {
+            width: 600px;
+        }
+
+        p a { margin: 0 10px; }
+
+        p a:hover { cursor: pointer; }
+
+        .progress-sty {
+            position: relative;
+            top: -20px;
+        }
+
+        progress {
+            border-top: 1px solid #d7d7d7;
+            border-bottom: 1px solid #d7d7d7;
+            border-radius: .5rem;
+            background: #e9e9e9;
+            height: 10px;
+            width: 100%;
+        }
+
+        progress::-webkit-progress-bar {
+            background: #e9e9e9;
+            border-radius: .2rem;
+        }
+
+        progress::-webkit-progress-value {
+            border-top: 1px solid rgba(0, 0, 0, 0.74);
+            background: rgba(60, 60, 60, 0.73);
+            border-radius: .5rem;
+        }
+
+        .btns a {
+            padding: 3px 5px;
+            font-size: 14px;
+            text-decoration: none;
+            border: 1px solid rgba(210, 111, 106, 0.43);
+            border-radius: 13px;
+        }
+
+        .btns a:hover {
+            color: #D24949;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <img src="" class="background-img"/>
+    </div>
+    <p class="progress-sty">
+        <progress value="" max="100" id="schedule"></progress>
+    </p>
+    <p class="btns">
+        <a class="retreat-btn">后退</a>
+        <a class="advance-btn">前进</a>
+        <a class="play-btn">暂停</a>
+    </p>
+
+</body>
+<script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="crossorigin="anonymous"></script>
+<script type="text/javascript">
+    (function(){
+        var varObj = {
+            timer: null,
+            index: 0,
+            playBtn: ["暂停","播放","重新播放"],
+            bgArray: [
+                'images/PART_0010483.jpg','images/PART_0010484.jpg','images/PART_0010485.jpg','images/PART_0010486.jpg',
+                'images/PART_0010487.jpg','images/PART_0010488.jpg','images/PART_0010489.jpg',
+                'images/PART_0010490.jpg','images/PART_0010491.jpg',
+                'images/PART_0010492.jpg','images/PART_0010493.jpg',
+                'images/PART_0010494.jpg','images/PART_0010495.jpg',
+                'images/PART_0010496.jpg','images/PART_0010497.jpg',
+                'images/PART_0010498.jpg','images/PART_0010499.jpg','images/PART_0010500.jpg','images/PART_0010501.jpg',
+                'images/PART_0010502.jpg','images/PART_0010503.jpg','images/PART_0010504.jpg',
+                'images/PART_0010505.jpg','images/PART_0010506.jpg'
+            ]
+        };
+
+        var showBgImgFn = function( index ){
+            if( index >= varObj.bgArray.length ){
+                index = varObj.bgArray.length - 1;
+                $(".play-btn").text( varObj.playBtn[2] );
+
+            }else if( index <= 0 ){
+                index = 0;
+            }
+
+            $(".background-img").attr("src", varObj.bgArray[index]);
+        };
+
+        var autoPlay = function(){
+            varObj.timer = setInterval( function(){
+                varObj.index++;
+
+                if( varObj.index >= varObj.bgArray.length ){
+                    clearInterval( varObj.timer );
+                    varObj.index = varObj.bgArray.length - 1;
+                    $(".play-btn").text( varObj.playBtn[2] );
+
+                }else if( varObj.index <= 0 ){
+                    varObj.index = 0;
+                }
+
+                setPercent();
+                showBgImgFn( varObj.index );
+
+            }, 200 );
+        };
+
+        $(".retreat-btn").click(function(){
+            varObj.index -= 2;
+
+            if( varObj.index <= 0 ){
+                varObj.index = 0;
+            }
+
+            showBgImgFn( varObj.index );
+            setPercent();
+
+            if( varObj.index >= 0 && varObj.index < varObj.bgArray.length ) {
+                $(".play-btn").text( varObj.playBtn[1] );
+            }
+        });
+
+        $(".advance-btn").click(function(){
+            varObj.index += 2;
+            showBgImgFn( varObj.index );
+            setPercent();
+        });
+
+        $(".play-btn").click(function(){
+            if( $(this).text() == varObj.playBtn[0] ){
+                clearInterval( varObj.timer );
+                $(this).text( varObj.playBtn[1] );
+
+            }else if( $(this).text() == varObj.playBtn[1] ){
+                autoPlay();
+                $(this).text( varObj.playBtn[0] );
+
+            }else {
+                varObj.index = 0;
+                showBgImgFn( varObj.index );
+
+                autoPlay();
+
+                $(this).text( varObj.playBtn[0] );
+            }
+
+        });
+
+        var setPercent = function(){
+            var scheduleValue = ( 100 / ( varObj.bgArray.length - 1 ) ) * varObj.index;
+
+            $("#schedule").val( scheduleValue );
+        };
+
+        $(".background-img").attr("src", varObj.bgArray[0]);
+        autoPlay();
+    })();
+
+</script>
+</html>
